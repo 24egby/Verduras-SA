@@ -1,0 +1,356 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Panel de Control - Verduras S.A</title>
+    <style>
+      :root {
+        --orange: #ff9800;
+        --bg: #f5f5f6;
+        --card: #ffffff;
+        --muted: #666;
+        --radius: 10px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Roboto, Arial, sans-serif;
+        background: var(--bg);
+        color: #222;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        line-height: 1.4;
+      }
+      img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+      }
+      .navbar {
+        background: var(--orange);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 18px;
+        gap: 12px;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      }
+      .nav-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .brand img {
+        width: 48px;
+        height: 48px;
+        object-fit: contain;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 4px;
+      }
+      .nav-links {
+        display: flex;
+        gap: 20px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        align-items: center;
+      }
+      .nav-links a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 8px 6px;
+        border-radius: 6px;
+      }
+      .nav-links a:hover {
+        background: rgba(0, 0, 0, 0.12);
+      }
+      .logout {
+        background: rgba(255, 255, 255, 0.12);
+        padding: 8px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+      }
+      .hamburger {
+        display: none;
+        background: transparent;
+        border: 0;
+        color: #fff;
+        font-size: 22px;
+        cursor: pointer;
+        padding: 8px;
+      }
+      .main {
+        padding: 28px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 22px;
+        align-items: start;
+      }
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+      }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+      .card-header h2 {
+        color: var(--orange);
+        font-size: 18px;
+        margin: 0;
+      }
+      .card p {
+        color: var(--muted);
+        margin: 0;
+        font-size: 14px;
+      }
+      .list-small {
+        margin: 10px 0 14px 0;
+        padding: 0;
+        list-style: none;
+        display: block;
+      }
+      .list-small li {
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: #fbfbfb;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #333;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+      }
+      .card-footer {
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 8px;
+      }
+      .btn {
+        border: 0;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        color: #333;
+      }
+      .btn-primary {
+        background: var(--orange);
+        color: #fff;
+        border: 0;
+      }
+      footer {
+        margin-top: 28px;
+        padding: 18px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      @media (max-width: 1100px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 720px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+        .nav-links {
+          display: none;
+          position: absolute;
+          right: 12px;
+          top: 64px;
+          flex-direction: column;
+          background: var(--orange);
+          padding: 12px;
+          border-radius: 8px;
+          width: 200px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .nav-links a {
+          padding: 10px;
+          display: block;
+        }
+        .hamburger {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+      }
+      .navbar img {
+        height: 80px;
+        width: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="navbar" role="banner">
+      <div class="nav-left">
+        <img src="{% static 'img/Logo.png' %}" alt="Logo Verduras S.A" />
+      </div>
+      <nav role="navigation" aria-label="Menu principal">
+        <button
+          class="hamburger"
+          id="hamburger"
+          aria-expanded="false"
+          aria-controls="main-menu"
+          aria-label="Abrir menú"
+        >
+          ☰
+        </button>
+        <ul class="nav-links" id="main-menu">
+          <li><a href="#">Informes</a></li>
+          <li><a href="#">Mapa</a></li>
+          <a href="{% url 'logout' %}" class="logout btn">Cerrar sesión</a>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="main" id="top" role="main">
+      <section style="margin-bottom: 18px">
+        <h2 style="margin: 0 0 6px 0">Resumen rápido</h2>
+        <p style="color: var(--muted); margin: 0">
+          Accede rápidamente a los módulos principales.
+        </p>
+      </section>
+
+      <section class="grid" aria-label="Panel con secciones principales">
+        <!-- Granjas -->
+        <article class="card">
+          <div>
+            <div class="card-header"><h2>Granjas</h2></div>
+            <ul class="list-small">
+              {% for g in granjas %}
+              <li><strong>{{ g.instalacion }}</strong> — {{ g.dirrecion }}</li>
+              {% empty %}
+              <li>No hay granjas registradas</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="card-footer">
+            <form action="{% url 'Gestion-Granjas' %}" method="post">
+            {% csrf_token %}
+              <button class="btn btn-primary", type="submit">Gestionar</button>
+            </form>
+          </div>
+        </article>
+
+        <!-- Bodegas -->
+        <article class="card">
+          <div>
+            <div class="card-header"><h2>Bodegas</h2></div>
+            <ul class="list-small">
+              {% for b in bodegas %}
+              <li><strong>{{ b.instalacion }}</strong> — {{ b.dirrecion }}</li>
+              {% empty %}
+              <li>No hay bodegas registradas</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary", type="submit">Gestionar</button>
+          </div>
+        </article>
+
+        <!-- Administradores -->
+        <article class="card">
+          <div>
+            <div class="card-header"><h2>Administradores</h2></div>
+            <ul class="list-small">
+              {% for a in admins %}
+              <li>
+                <strong>{{ a.idUserAuth.username }}</strong> — {{a.idInsta.instalacion }}
+              </li>
+              {% empty %}
+              <li>No hay administradores</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="card-footer">
+            <form action="{% url 'Gestion-Admins' %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-primary", type="submit">Gestionar</button>
+            </form>
+          </div>
+        </article>
+
+        <!-- Coordinadores -->
+        <article class="card">
+          <div>
+            <div class="card-header"><h2>Coordinadores</h2></div>
+            <ul class="list-small">
+              {% for c in coords %}
+              <li>
+                <strong>{{ c.idUserAuth.username }}</strong> — {{c.idInsta.instalacion }}
+              </li>
+              {% empty %}
+              <li>No hay coordinadores</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary", type="submit">Ver más</button>
+          </div>
+        </article>
+
+        <!-- Productos -->
+        <article class="card">
+          <div>
+            <div class="card-header"><h2>Productos</h2></div>
+            <ul class="list-small">
+              {% for p in productos %}
+              <li><strong>{{ p.producto }}</strong></li>
+              {% empty %}
+              <li>No hay productos registrados</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary", type="submit">Gestionar</button>
+          </div>
+        </article>
+      </section>
+
+      <footer>
+        &copy; <strong>Verduras S.A</strong> — Panel Gerencial · Todos los
+        derechos reservados
+      </footer>
+    </main>
+  </body>
+</html>
