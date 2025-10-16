@@ -301,16 +301,34 @@
         </form>
       </div>
 
+      <!-- BLOQUE DE MENSAJES -->
+      {% if messages %}
+      <div
+        style="
+          background-color: #d4edda;
+          color: #155724;
+          padding: 12px 18px;
+          border-radius: 8px;
+          border: 1px solid #c3e6cb;
+          margin-bottom: 20px;
+          font-weight: bold;
+        "
+      >
+        {% for message in messages %} {{ message }} {% endfor %}
+      </div>
+      {% endif %}
+
       <ul class="admin-list">
         {% for admin in admins_Granjas %}
         <li
           class="admin-item"
           onclick="abrirModal(
-            '{{ admin.idUserAuth.first_name }} {{ admin.idUserAuth.last_name }}',
-            '{{ admin.idUserAuth.email }}',
-            'Administrador de Granja',
-            '{{ admin.idInsta.instalacion|default:'Sin asignar' }}'
-          )"
+          '{{ admin.idUserAuth.first_name }} {{ admin.idUserAuth.last_name }}',
+          '{{ admin.idUserAuth.email }}',
+          'Administrador de Granja',
+          '{{ admin.idInsta.instalacion|default:'Sin asignar' }}',
+          '{{ admin.id }}'
+        )"
         >
           <h3>
             {{ admin.idUserAuth.first_name }} {{ admin.idUserAuth.last_name }}
@@ -321,11 +339,12 @@
         <li
           class="admin-item"
           onclick="abrirModal(
-            '{{ admin.idUserAuth.first_name }} {{ admin.idUserAuth.last_name }}',
-            '{{ admin.idUserAuth.email }}',
-            'Administrador de Bodega',
-            '{{ admin.idInsta.instalacion|default:'Sin asignar' }}'
-          )"
+          '{{ admin.idUserAuth.first_name }} {{ admin.idUserAuth.last_name }}',
+          '{{ admin.idUserAuth.email }}',
+          'Administrador de Bodega',
+          '{{ admin.idInsta.instalacion|default:'Sin asignar' }}',
+          '{{ admin.id }}'
+        )"
         >
           <h3>
             {{ admin.idUserAuth.first_name }} {{ admin.idUserAuth.last_name }}
@@ -350,7 +369,9 @@
         </div>
         <div class="modal-buttons">
           <button class="btn btn-editar">Editar</button>
-          <button class="btn btn-eliminar">Eliminar</button>
+          <button class="btn btn-eliminar" onclick="eliminarAdmin()">
+            Eliminar
+          </button>
         </div>
       </div>
     </div>
@@ -363,11 +384,14 @@
       const modalRegion = document.getElementById("modalRegion");
       const navLinks = document.getElementById("navLinks");
 
-      function abrirModal(nombre, email, rol, region) {
+      let adminIdSeleccionado = null;
+
+      function abrirModal(nombre, email, rol, region, id) {
         modalNombre.textContent = nombre;
         modalEmail.textContent = email;
         modalRol.textContent = rol;
         modalRegion.textContent = region;
+        adminIdSeleccionado = id;
         modal.style.display = "flex";
       }
 
@@ -384,6 +408,25 @@
           cerrarModal();
         }
       };
+
+      function eliminarAdmin() {
+        if (!adminIdSeleccionado) return;
+
+        if (confirm("¿Estás seguro de eliminar este administrador?")) {
+          const form = document.createElement("form");
+          form.method = "POST";
+          form.action = `Gestion-Admin/Eliminar-Admin/${adminIdSeleccionado}/`;
+
+          const csrf = document.createElement("input");
+          csrf.type = "hidden";
+          csrf.name = "csrfmiddlewaretoken";
+          csrf.value = "{{ csrf_token }}";
+          form.appendChild(csrf);
+
+          document.body.appendChild(form);
+          form.submit();
+        }
+      }
     </script>
   </body>
 </html>

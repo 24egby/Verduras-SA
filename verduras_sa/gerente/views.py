@@ -92,15 +92,30 @@ def crear_Admins(request):
 
     return render(request, "crear_Admins.html")
 
+@login_required
+def eliminar_admin(request, id_admin):
+    if request.method == "POST":
+        # Buscar el administrador en UsuarioRol
+        admin = get_object_or_404(LV.UsuarioRol, id=id_admin)
+        user_auth = admin.idUserAuth
+        instalaciones = Instalacion.objects.filter(idAdmin=admin.id)
+        for insta in instalaciones:
+            insta.idAdmin = None
+            insta.save()
+        admin.delete()
+        user_auth.delete()
+        messages.success(request, "Administrador eliminado correctamente.")
+        return redirect("Gestion-Admins")
+    return redirect('Gestion-Admins') 
+
 
 @login_required
 def obtener_instalaciones(request):
     tipo = request.GET.get("tipo")
     if tipo:
-        # 🔹 Filtrar por tipo y solo instalaciones sin administrador asignado
         instalaciones = Instalacion.objects.filter(
             tipoInsta=tipo,
-            idAdmin__isnull=True  # ✅ Solo sin administrador
+            idAdmin__isnull=True  
         ).values("id", "instalacion")
     else:
         instalaciones = Instalacion.objects.none()
@@ -183,5 +198,9 @@ def eliminar_Granja(request, id):
 #Vista Coordinadores 
 @login_required 
 def vista_coordinadores(request):
-    coordinadores = LV.UsuarioRol.objects.filter(idRol__in=[4, 5])
-    return render(request, "vista_Coord.html", {"coordinadores": coordinadores})
+    coords_Granjas = LV.UsuarioRol.objects.filter(idRol_id=4)
+    coords_Bodegas = LV.UsuarioRol.objects.filter(idRol_id=5)
+    return render(request, "vista_Coord.html", {
+        "coords_Granjas": coords_Granjas,
+        "coords_Bodegas": coords_Bodegas,
+    })

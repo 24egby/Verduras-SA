@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Coordinadores - Verduras S.A</title>
     <style>
-      /* --- estilos igual que antes --- */
       * {
         margin: 0;
         padding: 0;
@@ -283,26 +282,45 @@
       </div>
 
       <ul class="admin-list">
-        {% for coord in coordinadores %}
+        <!-- COORDINADORES DE GRANJAS -->
+        {% for coord in coords_Granjas %}
         <li
           class="admin-item"
           onclick="abrirModal(
-            '{{ coord.idUserAuth.first_name }} {{ coord.idUserAuth.last_name }}',
-            '{{ coord.idUserAuth.email }}',
-            'Coordinador',
-            '{{ coord.idInsta.instalacion|default:'Sin asignar' }}'
-          )"
+          '{{ coord.idUserAuth.first_name }} {{ coord.idUserAuth.last_name }}',
+          '{{ coord.idUserAuth.email }}',
+          'Coordinador de Granja',
+          '{{ coord.idInsta.instalacion|default:'Sin asignar' }}'
+        )"
         >
           <h3>
             {{ coord.idUserAuth.first_name }} {{ coord.idUserAuth.last_name }}
           </h3>
-          <p><strong>Rol:</strong> Coordinador</p>
+          <p><strong>Rol:</strong> Coordinador de Granja</p>
         </li>
-        {% empty %}
+        {% endfor %}
+
+        <!-- COORDINADORES DE BODEGAS -->
+        {% for coord in coords_Bodegas %}
+        <li
+          class="admin-item"
+          onclick="abrirModal(
+          '{{ coord.idUserAuth.first_name }} {{ coord.idUserAuth.last_name }}',
+          '{{ coord.idUserAuth.email }}',
+          'Coordinador de Bodega',
+          '{{ coord.idInsta.instalacion|default:'Sin asignar' }}'
+        )"
+        >
+          <h3>
+            {{ coord.idUserAuth.first_name }} {{ coord.idUserAuth.last_name }}
+          </h3>
+          <p><strong>Rol:</strong> Coordinador de Bodega</p>
+        </li>
+        {% endfor %} {% if not coords_Granjas and not coords_Bodegas %}
         <li class="admin-item">
           <h3>No hay coordinadores registrados</h3>
         </li>
-        {% endfor %}
+        {% endif %}
       </ul>
     </div>
 
