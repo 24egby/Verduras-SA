@@ -4,8 +4,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Granjas - Verduras S.A</title>
+    <title>Coordinadores - Verduras S.A</title>
     <style>
+      /* --- estilos igual que antes --- */
       * {
         margin: 0;
         padding: 0;
@@ -29,7 +30,7 @@
       }
 
       .navbar img {
-        height: 60px;
+        height: 80px;
         width: auto;
       }
 
@@ -95,14 +96,14 @@
         background-color: #e57700;
       }
 
-      .farm-list {
+      .admin-list {
         list-style: none;
         display: flex;
         flex-direction: column;
         gap: 15px;
       }
 
-      .farm-item {
+      .admin-item {
         background-color: white;
         border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -114,12 +115,12 @@
         cursor: pointer;
       }
 
-      .farm-item:hover {
+      .admin-item:hover {
         transform: translateY(-3px);
         background-color: #fff2e6;
       }
 
-      .farm-item h3 {
+      .admin-item h3 {
         color: #ff8800;
         margin: 0;
         font-size: 1.1rem;
@@ -235,10 +236,6 @@
           display: flex;
         }
 
-        .navbar img {
-          height: 50px;
-        }
-
         .header {
           flex-direction: column;
           align-items: flex-start;
@@ -250,20 +247,20 @@
           text-align: center;
         }
 
-        .farm-item {
+        .admin-item {
           flex-direction: column;
           align-items: flex-start;
           gap: 5px;
         }
 
-        .farm-item h3 {
+        .admin-item h3 {
           font-size: 1rem;
         }
       }
     </style>
   </head>
-
   <body>
+    <!-- NAVBAR -->
     <nav class="navbar">
       <img src="{% static 'img/Logo.png' %}" alt="Logo Verduras S.A" />
       <div class="menu-toggle" onclick="toggleMenu()">
@@ -279,61 +276,64 @@
       </div>
     </nav>
 
+    <!-- CONTENIDO -->
     <div class="content">
       <div class="header">
-        <h2>Granjas Registradas</h2>
-        <form action="{% url 'Crear-Granja' %}" method="post">
-          {% csrf_token %}
-          <button class="btn-agregar">➕ Agregar Granja</button>
-        </form>
+        <h2>Coordinadores Registrados</h2>
       </div>
 
-      <ul class="farm-list">
-        {% for g in granjas %}
+      <ul class="admin-list">
+        {% for coord in coordinadores %}
         <li
-          class="farm-item"
-          onclick="abrirModal('{{ g.id }}', '{{ g.instalacion }}', '{{ g.dirrecion }}', '{{ g.admin.idUserAuth.username|default:"Administrador pendiente" }}')"
+          class="admin-item"
+          onclick="abrirModal(
+            '{{ coord.idUserAuth.first_name }} {{ coord.idUserAuth.last_name }}',
+            '{{ coord.idUserAuth.email }}',
+            'Coordinador',
+            '{{ coord.idInsta.instalacion|default:'Sin asignar' }}'
+          )"
         >
-          <h3>{{ g.instalacion }}</h3>
+          <h3>
+            {{ coord.idUserAuth.first_name }} {{ coord.idUserAuth.last_name }}
+          </h3>
+          <p><strong>Rol:</strong> Coordinador</p>
         </li>
         {% empty %}
-        <li>No hay granjas registradas</li>
+        <li class="admin-item">
+          <h3>No hay coordinadores registrados</h3>
+        </li>
         {% endfor %}
       </ul>
     </div>
 
     <!-- MODAL -->
-    <div class="modal" id="modalFarm">
+    <div class="modal" id="modalAdmin">
       <div class="modal-content">
         <div class="modal-header">
           <h3 id="modalNombre">Nombre</h3>
           <button class="close-btn" onclick="cerrarModal()">✖</button>
         </div>
         <div class="modal-body">
-          <p><b>Ubicación:</b> <span id="modalUbicacion"></span></p>
-          <p><b>Encargado:</b> <span id="modalEncargado"></span></p>
-        </div>
-        <div class="modal-buttons">
-          <button class="btn btn-editar">Editar</button>
-          <button class="btn btn-eliminar" onclick="eliminarGranja()">Eliminar</button>
+          <p><b>Email:</b> <span id="modalEmail"></span></p>
+          <p><b>Rol:</b> <span id="modalRol"></span></p>
+          <p><b>Lugar de trabajo:</b> <span id="modalRegion"></span></p>
         </div>
       </div>
     </div>
 
     <script>
-      const modal = document.getElementById("modalFarm");
+      const modal = document.getElementById("modalAdmin");
       const modalNombre = document.getElementById("modalNombre");
-      const modalUbicacion = document.getElementById("modalUbicacion");
-      const modalEncargado = document.getElementById("modalEncargado");
+      const modalEmail = document.getElementById("modalEmail");
+      const modalRol = document.getElementById("modalRol");
+      const modalRegion = document.getElementById("modalRegion");
       const navLinks = document.getElementById("navLinks");
 
-      let idActual = null;
-
-      function abrirModal(id, nombre, ubicacion, encargado) {
-        idActual = id;
+      function abrirModal(nombre, email, rol, region) {
         modalNombre.textContent = nombre;
-        modalUbicacion.textContent = ubicacion;
-        modalEncargado.textContent = encargado;
+        modalEmail.textContent = email;
+        modalRol.textContent = rol;
+        modalRegion.textContent = region;
         modal.style.display = "flex";
       }
 
@@ -346,46 +346,10 @@
       }
 
       window.onclick = function (event) {
-        if (event.target === modal) cerrarModal();
-      };
-
-      function eliminarGranja() {
-        if (!idActual) return;
-        if (!confirm("¿Seguro que deseas eliminar esta granja?")) return;
-
-        fetch(`Gestion-Granjas/Eliminar-Granja/${idActual}/`, {
-          method: "POST",
-          headers: {
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-        })
-          .then((r) => {
-            if (r.ok) {
-              alert("Granja eliminada con éxito");
-              location.reload();
-            } else {
-              alert("Error al eliminar la granja");
-            }
-          })
-          .catch(() => alert("Error de conexión"));
-      }
-
-      function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-          const cookies = document.cookie.split(";");
-          for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === name + "=") {
-              cookieValue = decodeURIComponent(
-                cookie.substring(name.length + 1)
-              );
-              break;
-            }
-          }
+        if (event.target === modal) {
+          cerrarModal();
         }
-        return cookieValue;
-      }
+      };
     </script>
   </body>
 </html>

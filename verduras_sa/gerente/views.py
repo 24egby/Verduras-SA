@@ -36,47 +36,6 @@ def gestion_Admins(request):
     return render(request, "gestion_Administradores.html", context)
 
 
-"""@login_required
-@transaction.atomic  # asegura que si algo falla, no se guarda nada parcial
-def crear_Admins(request):
-    if request.method == "POST":
-        nombre = request.POST.get("nombre")
-        apellido = request.POST.get("apellido")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        tipo_insta = request.POST.get("tipo-instalacion")  # 2 o 3
-        if tipo_insta == "1": 
-            idRol_id_e = "2"
-        elif tipo_insta == "2":
-            idRol_id_e == "3"
-        id_insta = request.POST.get("instalacion")  # ID real de la instalación
-        try:
-            user = User.objects.create_user(
-                username= f"{nombre}.{apellido}",
-                email=email,
-                password=password,
-                first_name=nombre,
-                last_name=apellido,
-            )
-
-            LV.UsuarioRol.objects.create(
-                idUserAuth=user,     # relación con auth_user
-                idRol_id=idRol_id_e,
-                idInsta_id=id_insta  # instalación elegida
-            )
-
-            messages.success(request, "Administrador registrado exitosamente.")
-            return redirect("Gestion-Admins")
-
-        except Exception as e:
-            print("Error al registrar:", e)
-            messages.error(request, f"Ocurrió un error: {str(e)}")
-            return redirect("Agregar-Admin")
-
-    # Si es GET, renderiza el formulario vacío
-    return render(request, "crear_Admins.html")
-"""
-
 @login_required
 @transaction.atomic
 def crear_Admins(request):
@@ -129,22 +88,24 @@ def crear_Admins(request):
         except Exception as e:
             print("Error al registrar:", e)
             messages.error(request, f"Ocurrió un error: {str(e)}")
-            return redirect("Crear-Granja")
+            return redirect("Agregar-Admin")
 
     return render(request, "crear_Admins.html")
 
 
-
-
-
-
-
 @login_required
 def obtener_instalaciones(request):
-    tipo = request.GET.get('tipo')
-    instalaciones = Instalacion.objects.filter(tipoInsta=tipo).values('id', 'instalacion')
-    return JsonResponse(list(instalaciones), safe=False)
+    tipo = request.GET.get("tipo")
+    if tipo:
+        # 🔹 Filtrar por tipo y solo instalaciones sin administrador asignado
+        instalaciones = Instalacion.objects.filter(
+            tipoInsta=tipo,
+            idAdmin__isnull=True  # ✅ Solo sin administrador
+        ).values("id", "instalacion")
+    else:
+        instalaciones = Instalacion.objects.none()
 
+    return JsonResponse(list(instalaciones), safe=False)
 
 
 #Area de gestion de Granjas
@@ -162,16 +123,65 @@ def gestion_Granjas(request):
     }
     return render(request, "gestion_Granjas.html", context)
 
-
 @login_required
 def crear_Granja(request):
-    return render(request, "crear_Granja.html")
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        dirrecion = request.POST.get('dirrecion')
+
+        # Validación: campos vacíos
+        if not nombre or not dirrecion:
+            messages.error(request, "⚠️ Por favor complete todos los campos.")
+            return redirect('Crear-Granja')
+
+        # Normalizar texto para comparar sin mayúsculas o espacios
+        nombre_limpio = nombre.strip().lower()
+        dirrecion_limpia = dirrecion.strip().lower()
+
+        # Validación: existencia previa
+        if Instalacion.objects.filter(instalacion__iexact=nombre_limpio).exists():
+            messages.error(request, "❌ Ya existe una granja con ese nombre.")
+            return redirect('Crear-Granja')
+
+        if Instalacion.objects.filter(dirrecion__iexact=dirrecion_limpia).exists():
+            messages.error(request, "❌ Ya existe una granja con esa dirección.")
+            return redirect('Crear-Granja')
+
+        # Crear registro si todo es válido
+        try:
+            Instalacion.objects.create(
+                instalacion=nombre,
+                dirrecion=dirrecion,
+                tipoInsta=1,  # Siempre 1 = Granja
+                idAdmin=None,
+                idCoord=None
+            )
+            messages.success(request, f"✅ La granja '{nombre}' fue registrada correctamente.")
+        except Exception as e:
+            messages.error(request, f"⚠️ Error al registrar: {e}")
+
+        return redirect('Crear-Granja')
+
+    return render(request, 'crear_Granja.html')
 
 @login_required
 @csrf_exempt
-def eliminar_granja(request, id):
+def eliminar_Granja(request, id):
     if request.method == 'POST':
-        granja = get_object_or_404(Instalacion, id=id)
-        granja.delete()
-        return JsonResponse({'status': 'ok'})
-    return JsonResponse({'error': 'Método no permitido'}, status=405)
+        try:
+            granja = Instalacion.objects.get(id=id)
+            granja.delete()
+            return JsonResponse({'success': True})
+        except Instalacion.DoesNotExist:
+            return JsonResponse({'error': 'Granja no encontrada'}, status=404)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+   
+   
+#Vista Coordinadores 
+@login_required 
+def vista_coordinadores(request):
+    coordinadores = LV.UsuarioRol.objects.filter(idRol__in=[4, 5])
+    return render(request, "vista_Coord.html", {"coordinadores": coordinadores})

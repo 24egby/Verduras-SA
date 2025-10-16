@@ -295,7 +295,7 @@
             <ul class="list-small">
               {% for a in admins %}
               <li>
-                <strong>{{ a.idUserAuth.username }}</strong> — {{a.idInsta.instalacion }}
+                <strong>{{ a.idUserAuth.first_name }} {{ a.idUserAuth.last_name }}</strong> — {{ c.idInsta.instalacion }}
               </li>
               {% empty %}
               <li>No hay administradores</li>
@@ -317,7 +317,7 @@
             <ul class="list-small">
               {% for c in coords %}
               <li>
-                <strong>{{ c.idUserAuth.username }}</strong> — {{c.idInsta.instalacion }}
+                <strong>{{ c.idUserAuth.first_name }} {{ c.idUserAuth.last_name }}</strong> — {{ c.idInsta.instalacion }}
               </li>
               {% empty %}
               <li>No hay coordinadores</li>
@@ -325,7 +325,10 @@
             </ul>
           </div>
           <div class="card-footer">
-            <button class="btn btn-primary", type="submit">Ver más</button>
+            <form action="{% url 'Vista-Coords' %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-primary", type="submit">Ver más</button>
+            </form>
           </div>
         </article>
 

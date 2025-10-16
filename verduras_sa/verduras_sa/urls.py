@@ -31,12 +31,13 @@ urlpatterns = [
     #Gestion Granjas
     path('Gerente/Gestion-Granjas', VG.gestion_Granjas, name="Gestion-Granjas"),
     path('Gerente/Gestion-Granjas/Crear-Granja', VG.crear_Granja, name="Crear-Granja"),
-    path('Gerente/Gestion-Granjas/Eliminar-Granja/<int:id>/', VG.eliminar_granja, name='Eliminar-Granja'),
+    path('Gerente/Gestion-Granjas/Eliminar-Granja/<int:id>/', VG.eliminar_Granja, name='Eliminar-Granja'),
     #Gestion Admins
     path('Gerente/Gestion-Admin', VG.gestion_Admins, name="Gestion-Admins"),
     path('Gerente/Gestion-Admin/Agregar-Admin', VG.crear_Admins, name="Agregar-Admin"),
     path('Gerente/Gestion-Admin/Obtener-Instalaciones/', VG.obtener_instalaciones, name='Obtener-Instalaciones'),
-
+    #Vista Coords
+    path('Gerente/Vista-Coords', VG.vista_coordinadores, name="Vista-Coords"),
     
     
     
