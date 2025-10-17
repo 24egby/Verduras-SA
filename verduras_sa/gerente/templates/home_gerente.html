@@ -284,7 +284,10 @@
             </ul>
           </div>
           <div class="card-footer">
-            <button class="btn btn-primary", type="submit">Gestionar</button>
+            <form action="{% url 'Gestion-Bodegas' %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-primary", type="submit">Gestionar</button>
+            </form>
           </div>
         </article>
 
@@ -345,7 +348,10 @@
             </ul>
           </div>
           <div class="card-footer">
-            <button class="btn btn-primary", type="submit">Gestionar</button>
+            <form action="{% url 'Gestion-Productos' %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-primary", type="submit">Gestionar</button>
+            </form>
           </div>
         </article>
       </section>

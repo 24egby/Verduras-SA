@@ -30,7 +30,7 @@ def login_view(request):
             elif rol_nombre == "CoordBodega":
                 return redirect("Coord-Bodega")
             elif rol_nombre == "EmpleBodega":
-                return redirect("Emple-Bodega")
+                return redirect("Empleado-Bodega")
         else:
             error = "Usuario o contraseña incorrectos."
     return render(request, "index.html", {'error': error})

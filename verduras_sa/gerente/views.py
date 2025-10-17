@@ -13,7 +13,7 @@ def home_gerente(request):
     granjas = Instalacion.objects.filter(tipoInsta=1)
     bodegas = Instalacion.objects.filter(tipoInsta=2)
     admins = LV.UsuarioRol.objects.filter(idRol__in=[2, 3]).select_related('idInsta', 'idUserAuth')
-    coords = LV.UsuarioRol.objects.filter(idRol__in=[3, 4]).select_related('idInsta', 'idUserAuth')
+    coords = LV.UsuarioRol.objects.filter(idRol__in=[4, 5]).select_related('idInsta', 'idUserAuth')
     productos = Producto.objects.all()
     context = {
         "admins": admins,
@@ -34,7 +34,6 @@ def gestion_Admins(request):
         'admins_Bodegas': admins_Bodegas
     }
     return render(request, "gestion_Administradores.html", context)
-
 
 @login_required
 @transaction.atomic
@@ -107,7 +106,6 @@ def eliminar_admin(request, id_admin):
         messages.success(request, "Administrador eliminado correctamente.")
         return redirect("Gestion-Admins")
     return redirect('Gestion-Admins') 
-
 
 @login_required
 def obtener_instalaciones(request):
@@ -193,8 +191,8 @@ def eliminar_Granja(request, id):
             return JsonResponse({'error': str(e)}, status=500)
     else:
         return JsonResponse({'error': 'Método no permitido'}, status=405)
-   
-   
+
+
 #Vista Coordinadores 
 @login_required 
 def vista_coordinadores(request):
@@ -204,3 +202,44 @@ def vista_coordinadores(request):
         "coords_Granjas": coords_Granjas,
         "coords_Bodegas": coords_Bodegas,
     })
+
+
+#Gestion Productos
+@login_required
+def gestion_Productos(request):
+    productos = Producto.objects.all()
+    context = {
+        "productos": productos,
+    }
+    return render(request, "gestion_Productos.html", context)
+
+@login_required
+def eliminar_producto(request, id):
+    producto = get_object_or_404(Producto, id=id)
+    producto.delete()
+    messages.success(request, "✅ Producto eliminado exitosamente.")
+    return redirect("Gestion-Productos")
+
+@login_required
+def agregar_producto(request):
+    if request.method == "POST":
+        nombre = request.POST.get("nombre")
+        if nombre:
+            Producto.objects.create(producto=nombre)
+    messages.success(request, "✅ Producto agregado exitosamente.")
+    return redirect("Gestion-Productos")
+
+#Area de gestion de Bodegas
+@login_required
+def gestion_Bodegas(request):
+    bodegas = Instalacion.objects.filter(tipoInsta=2)
+    admins_Bodegas = LV.UsuarioRol.objects.filter(idRol=3).select_related('idUserAuth', 'idInsta')
+    bodegas_con_admin = []
+    for b in bodegas:
+        admin = next((a for a in admins_Bodegas if a.idInsta_id == b.id), None)
+        b.admin = admin  # puede ser None si no hay admin
+        bodegas_con_admin.append(b)
+    context = {
+        "bodegas": bodegas_con_admin,
+    }
+    return render(request, "gestion_Bodegas.html", context)

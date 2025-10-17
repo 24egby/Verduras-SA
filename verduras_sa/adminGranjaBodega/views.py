@@ -2,5 +2,5 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
 @login_required
-def home_coord_bodega(request):
-    render(request, "home_coordinador_bodega.html")
+def home_admins(request):
+    render(request, "home_admin.html")

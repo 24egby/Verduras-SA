@@ -19,6 +19,10 @@ from django.urls import path
 
 import login.views as VL
 import gerente.views as VG
+import empleadoBodega.views as VEB 
+import adminGranjaBodega.views as VAGB
+import coordinadorBodega.views as VCB
+import coordinadorGranja.views as VCG
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,38 +31,35 @@ urlpatterns = [
     
     #Rutas Gerente
     path('Gerente', VG.home_gerente, name="Gerente"),
-    
-    #Gestion Granjas
+        #Gestion Granjas
     path('Gerente/Gestion-Granjas', VG.gestion_Granjas, name="Gestion-Granjas"),
     path('Gerente/Gestion-Granjas/Crear-Granja', VG.crear_Granja, name="Crear-Granja"),
     path('Gerente/Gestion-Granjas/Eliminar-Granja/<int:id>/', VG.eliminar_Granja, name='Eliminar-Granja'),
-    #Gestion Admins
+        #Gestion Admins
     path('Gerente/Gestion-Admin', VG.gestion_Admins, name="Gestion-Admins"),
     path('Gerente/Gestion-Admin/Agregar-Admin', VG.crear_Admins, name="Agregar-Admin"),
     path('Gerente/Gestion-Admin/Obtener-Instalaciones/', VG.obtener_instalaciones, name='Obtener-Instalaciones'),
     path('Gerente/Gestion-Admin/Eliminar-Admin/<int:id_admin>/', VG.eliminar_admin, name="Eliminar-Admin"),
-    #Vista Coords
+        #Vista Coords
     path('Gerente/Vista-Coords', VG.vista_coordinadores, name="Vista-Coords"),
+        #Gestion Productos
+    path('Gerente/Gestion-Productos', VG.gestion_Productos, name="Gestion-Productos"),
+    path('Gerente/Gestion-Productos/Eliminar-Producto/<int:id>/', VG.eliminar_producto, name="Eliminar-Producto"),
+    path("Gerente/Gestion-Productos/Agregar-Producto/", VG.agregar_producto, name="Agregar-Producto"),
+        #Gestion Bodegas
+    path('Gerente/Gestion-Bodegas', VG.gestion_Bodegas, name="Gestion-Bodegas"),
+    
+
+    #Rutas Empleado Bodega
+    path('Empleado-Bodega', VEB.home_empleado, name="Empleado-Bodega"),
     
     
-    
-    
-    
-    
-    
-    
-    #Rutas Admin Granja
-    #path('Admin-Granja', VL.home_adminGranja, name="Admin-Granja"),
-    
-    #Rutas Admin Bodega
-    #path('Admin-Bodega', VL.home_adminBodega, name="Admin-Bodega"),
+    #Rutas Admin Granja Bodega
+    path('Admin', VAGB.home_adminGranja, name="Admin"),
     
     #Rutas Coor Granja
-    #path('Coor-Granja', VL.home_coorGranja, name="Coord-Granja"),
+    path('Coor-Granja', VCG.home_coorGranja, name="Coord-Granja"),
     
     #Rutas Coor Bodega
-    #path('Coord-Bodega', VL.home_coorBodega, name="Coord-Bodega"),
-    
-    #Rutas Empleado Bodega
-    #path('Emple-Bodega', VL.home_empleado, name="Emple-Bodega"),
+    path('Coord-Bodega', VCB.home_coorBodega, name="Coord-Bodega"),    
 ]

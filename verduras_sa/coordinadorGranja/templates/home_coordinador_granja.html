@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Coordinador de Granja - Verduras S.A</title>
+  <style>
+    :root {
+      --orange: #ff8800;
+      --bg: #f7f7f7;
+      --card: #fff;
+      --text: #222;
+      --muted: #666;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; font-family: "Segoe UI", sans-serif; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* --- NAVBAR --- */
+    .navbar {
+      background: var(--orange);
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .navbar img {
+      height: 80px;
+      width: auto;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+      font-weight: bold;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+
+    .nav-links a:hover {
+      background: rgba(255,255,255,0.15);
+    }
+
+    .logout {
+      background: rgba(255,255,255,0.2);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    /* --- CONTENIDO --- */
+    .content {
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .header h1 {
+      color: var(--orange);
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    .card h2 {
+      color: var(--orange);
+      margin-top: 0;
+      font-size: 1.2rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      background: var(--orange);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #e67400;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    /* MODAL */
+    .modal-bg {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+
+    .modal {
+      background: #fff;
+      padding: 25px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      animation: fadeIn .3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      color: var(--orange);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      float: right;
+      cursor: pointer;
+    }
+
+    .input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      margin: 6px 0;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .table th, .table td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    .table th {
+      background: #fff7ef;
+      color: var(--orange);
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .nav-links {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <img src="Logo.png" alt="Logo Verduras S.A">
+    <div class="nav-links">
+      <a href="#">Inicio</a>
+      <a href="#">Productos</a>
+      <a href="#">Camiones</a>
+      <a href="#">Notificaciones</a>
+      <a href="#" class="logout">Cerrar sesión</a>
+    </div>
+  </nav>
+
+  <div class="content">
+    <div class="header">
+      <h1>Panel del Coordinador de Granja</h1>
+      <p>Gestione la producción, los camiones y el estado de envío de vegetales.</p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>🌱 Registrar Producción</h2>
+        <p>Ingrese los productos producidos y asócielos a los camiones disponibles.</p>
+        <button class="btn" onclick="openModal('produccion')">Registrar</button>
+      </div>
+
+      <div class="card">
+        <h2>🚛 Salida de Camiones</h2>
+        <p>Verifique los camiones listos para salir y confirme su salida hacia la bodega.</p>
+        <button class="btn" onclick="openModal('camiones')">Ver Camiones</button>
+      </div>
+
+      <div class="card">
+        <h2>🔔 Notificaciones</h2>
+        <p>Revise los reportes automáticos de salida y recepción de camiones.</p>
+        <button class="btn" onclick="openModal('notificaciones')">Ver Notificaciones</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Verduras S.A — Sistema de gestión de granjas y bodegas
+  </footer>
+
+  <!-- MODALES -->
+  <div class="modal-bg" id="modalBg">
+    <div class="modal" id="modalBox">
+      <button class="close-btn" onclick="closeModal()">✖</button>
+      <h3 id="modalTitle"></h3>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    const modalBg = document.getElementById('modalBg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalContent = document.getElementById('modalContent');
+
+    function openModal(type) {
+      modalBg.style.display = 'flex';
+      if (type === 'produccion') {
+        modalTitle.textContent = 'Registrar Producción';
+        modalContent.innerHTML = `
+          <label>Producto:</label>
+          <input class="input" placeholder="Ej: Zanahoria">
+          <label>Cantidad (kg):</label>
+          <input class="input" type="number" placeholder="Ej: 1200">
+          <label>Camión asignado:</label>
+          <select class="input">
+            <option>Camión 1</option>
+            <option>Camión 2</option>
+            <option>Camión 3</option>
+          </select>
+          <button class="btn" style="margin-top:10px;">Guardar</button>
+        `;
+      } else if (type === 'camiones') {
+        modalTitle.textContent = 'Salida de Camiones';
+        modalContent.innerHTML = `
+          <table class="table">
+            <tr><th>ID</th><th>Destino</th><th>Estado</th></tr>
+            <tr><td>001</td><td>Bodega 1</td><td>Listo para salir</td></tr>
+            <tr><td>002</td><td>Bodega 3</td><td>En carga</td></tr>
+            <tr><td>003</td><td>Bodega 2</td><td>En ruta</td></tr>
+          </table>
+          <button class="btn" style="margin-top:10px;">Confirmar salida seleccionada</button>
+        `;
+      } else if (type === 'notificaciones') {
+        modalTitle.textContent = 'Notificaciones Recientes';
+        modalContent.innerHTML = `
+          <ul style="list-style:none;padding-left:0;">
+            <li>📦 Camión 001 llegó a Bodega 1 - 10:30 AM</li>
+            <li>🚛 Camión 002 salió de Granja 2 - 09:45 AM</li>
+            <li>⚠️ Camión 003 retrasado por mantenimiento</li>
+          </ul>
+          <button class="btn" style="margin-top:10px;">Actualizar</button>
+        `;
+      }
+    }
+
+    function closeModal() {
+      modalBg.style.display = 'none';
+    }
+
+    window.onclick = e => {
+      if (e.target === modalBg) closeModal();
+    };
+  </script>
+</body>
+</html>
